@@ -22,6 +22,9 @@ class SmileDetectorApp(App):
         if not ret:
             return
 
+        # Flip the frame vertically
+        frame = cv2.flip(frame, 0)
+
         # Turn image to grayscale
         grayScaleImg = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -42,6 +45,11 @@ class SmileDetectorApp(App):
                 cv2.rectangle(theFace, (x_, y_), (x_ + w_, y_ + h_), (50, 50, 200), 4)
                 cv2.putText(frame, "smiling", (x, y + h + 40), fontScale=3,
                             fontFace=cv2.FONT_HERSHEY_PLAIN, color=(255, 255, 255))
+                
+                flipped_image = cv2.flip(frame, 0)
+                
+                # Save the original unflipped frame as an image
+                cv2.imwrite("smile_detected.jpg", flipped_image)
 
         # Convert the frame to texture for display in Kivy
         image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
