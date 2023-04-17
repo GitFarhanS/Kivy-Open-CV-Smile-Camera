@@ -5,7 +5,9 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.uix.relativelayout import RelativeLayout
 from kivymd.app import MDApp
-from kivy.uix.videoplayer import VideoPlayer
+from kivy.uix.video import Video
+from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
 
 cap = cv2.VideoCapture(0)
 trainedFaceData = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -15,6 +17,8 @@ trainedSmileData = cv2.CascadeClassifier("haarcascade_smile.xml")
 class MainApp(MDApp):
     title = "DOG"
     def build(self):
+        # Create a vertical box layout to hold the buttons
+        layout = BoxLayout(orientation='horizontal', spacing=700)
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "BlueGray"
 
@@ -24,25 +28,23 @@ class MainApp(MDApp):
         self.img = Image()
         layout.add_widget(self.img)
 
-        # Create a video player
-        player = VideoPlayer(source = "funny_dog.mp4")
-        player.state = "play"
-        player.options = {'eos': 'loop'}
-        player.allow_stretch = True
-        layout.add_widget(player)
-
-        # Set controls property of video player to False to remove controls
-        player.controls = False
-
-        # Set the position and size of the video player using pos_hint and size_hint
-        player.pos_hint = {'top': 1, 'center_x': 0.5, 'height': 0.5}
-        player.size_hint = (1, 0.5)  # Set video player size to match camera feed size
+        video = Video(source='funny_dog.mp4')
+        video.state='play'
+        video.options = {'eos': 'loop'}
+        video.allow_stretch=True
+        video.width = self.img.width
+        layout.add_widget(video)
 
         # Set the position of the camera feed image using pos_hint
         self.img.pos_hint = {'y': 0, 'center_x': 0.5,'height': 0.5}
         self.img.size_hint = (1, 0.5)
 
-        Clock.schedule_interval(self.update, 1.0 / 30.0) # Update at 30 FPS
+        # Set the position and size of the video player using pos_hint and size_hint
+        video.pos_hint = {'top': 1, 'center_x': 0.5, 'height': 0.5}
+        video.size_hint = (0.5, 0.5)  # Set video player size to match camera feed size
+    
+
+        Clock.schedule_interval(self.update, 1.0 / 60.0) # Update at 60 FPS
 
         return layout
 
